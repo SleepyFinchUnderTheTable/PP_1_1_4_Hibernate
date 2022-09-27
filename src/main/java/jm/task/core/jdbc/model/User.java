@@ -62,11 +62,8 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", age=" + age +
-                '}';
+        return new StringBuffer().append("Name: " + name + " | ")
+                .append("LastName: " + lastName + " | ")
+                .append("Age: " + age + "\n").toString();
     }
 }

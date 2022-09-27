@@ -1,5 +1,7 @@
 package jm.task.core.jdbc.util;
 
+import org.hibernate.cfg.Configuration;
+
 import java.sql.*;
 
 
@@ -8,7 +10,7 @@ public class Util {
     private static final String login = "root";
     private static final String host = "jdbc:mysql://localhost:3306/testdb";
     private static Connection connection;
-    private static Statement statement;
+    private static Util instance;
 
     public static Connection getConnection() {
         try {
@@ -18,5 +20,14 @@ public class Util {
         }
     }
 
-    // реализуйте настройку соеденения с БД
+    public static Util getInstance() throws SQLException {
+        if (instance == null) {
+            instance = new Util();
+        } else if (instance.getConnection().isClosed()) {
+            instance = new Util();
+        }
+        return instance;
+    }
+
+    Configuration configuration = new Configuration();
 }
