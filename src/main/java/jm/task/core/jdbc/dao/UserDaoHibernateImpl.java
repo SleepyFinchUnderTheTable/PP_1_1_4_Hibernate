@@ -6,6 +6,8 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoHibernateImpl implements UserDao {
@@ -16,53 +18,76 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void createUsersTable() {
-        Session session = Util.getSession();
-        session.beginTransaction();
-        session.createSQLQuery("CREATE TABLE IF NOT EXISTS users (\n" +
-                "                    \t  id INTEGER auto_increment primary KEY ,\n" +
-                "                        name varchar(20),\n" +
-                "                        lastName varchar(20),\n" +
-                "                        age integer(3))");
-        session.getTransaction().commit();
+        String sqlDltTable = """
+                    CREATE TABLE IF NOT EXISTS users (
+                    \t  id INTEGER auto_increment primary KEY ,
+                        name varchar(20),
+                        lastName varchar(20),
+                        age integer(3));""";
+        try (Session session = Util.getInstance().getSession();){
+            session.beginTransaction();
+            session.createSQLQuery(sqlDltTable).executeUpdate();
+            session.getTransaction().commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void dropUsersTable() {
-        Session session = Util.getSession();
-        session.beginTransaction();
-        session.createSQLQuery("DROP TABLE IF EXISTS users");
-        session.getTransaction().commit();
+        String sqlDropTblUsrs = "DROP TABLE IF EXISTS users";
+        try (Session session = Util.getInstance().getSession();){
+            session.beginTransaction();
+            session.createSQLQuery(sqlDropTblUsrs).executeUpdate();
+            session.getTransaction().commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-        Session session = Util.getSession();
-        session.beginTransaction();
-        session.save(new User(name, lastName, age));
-        session.getTransaction().commit();
+        try (Session session = Util.getInstance().getSession()){
+            session.beginTransaction();
+            session.save(new User(name, lastName, age));
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void removeUserById(long id) {
-        Session session = Util.getSession();
-        session.beginTransaction();
-        User user = session.get(User.class, id);
-        session.delete(user);
-        session.getTransaction().commit();
+        try (Session session = Util.getInstance().getSession();){
+            session.beginTransaction();
+            User user = session.get(User.class, id);
+            session.delete(user);
+            session.getTransaction().commit();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public List<User> getAllUsers() {
-
-        return null;
+        List<User> userList = new ArrayList<>();
+        try (Session session = Util.getInstance().getSession();){
+            session.beginTransaction();
+            userList = session.createQuery("FROM User").getResultList();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return userList;
     }
 
     @Override
     public void cleanUsersTable() {
-        Session session = Util.getSession();
-        session.beginTransaction();
-        session.createSQLQuery("TRUNCATE TABLE users");
-        session.beginTransaction().commit();
-
+        try (Session session = Util.getInstance().getSession();){
+            session.beginTransaction();
+            session.createQuery("delete User").executeUpdate();
+            session.getTransaction().commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

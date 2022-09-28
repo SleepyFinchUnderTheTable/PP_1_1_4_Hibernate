@@ -11,27 +11,18 @@ import org.hibernate.SessionFactory;
 import java.sql.*;
 
 public class Main {
-    public static final UserService userService= new UserServiceImpl();
+    public static final UserService userService = new UserServiceImpl();
 
     public static void main(String[] args) {
         // реализуйте алгоритм здесь
-//        userService.createUsersTable();
-//        userService.saveUser("John", "Snow", (byte) 27);
-//        userService.saveUser("Walter", "White", (byte) 55);
-//        userService.saveUser("Jessy", "Pinkman", (byte) 24);
-//        userService.saveUser("Saul", "Goodman", (byte) 46);
-//        userService.removeUserById(1);
-//        System.out.println(userService.getAllUsers());
-//        userService.cleanUsersTable();
-//        userService.dropUsersTable();
-
-
-        Session session = Util.getSession();
-        session.beginTransaction();
-        session.save(new User("abc", "cde", (byte) 22));
-        session.getTransaction().commit();
-
-
-
+        userService.createUsersTable();
+        userService.saveUser("John", "Snow", (byte) 27);
+        userService.saveUser("Walter", "White", (byte) 55);
+        userService.saveUser("Jessy", "Pinkman", (byte) 24);
+        userService.saveUser("Saul", "Goodman", (byte) 46);
+        userService.removeUserById(1);
+        System.out.println(userService.getAllUsers());
+        userService.cleanUsersTable();
+        userService.dropUsersTable();
     }
 }
