@@ -12,7 +12,7 @@ public class Util {
     private static final String login = "root";
     private static final String host = "jdbc:mysql://localhost:3306/testdb";
     private static Connection connection;
-    private static Util instance;
+    private volatile static Util instance;
 
     public static Connection getConnection() {
         try {
@@ -24,9 +24,11 @@ public class Util {
 
     public static Util getInstance() throws SQLException {
         if (instance == null) {
-            instance = new Util();
-        } else if (instance.getConnection().isClosed()) {
-            instance = new Util();
+            synchronized (Util.class) {
+                if (instance == null) {
+                    instance = new Util();
+                }
+            }
         }
         return instance;
     }
